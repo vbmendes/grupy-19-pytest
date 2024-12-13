@@ -1,0 +1,7 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=titulos_2024
+POSTGRES_USER=rkxQsbcwmjdBQpzaRaEEfIaMOSOzqFKr
+POSTGRES_PASSWORD=EYZreGgkAq7LibemU79q7hZDKKQyH5kdGj9xo0F9nlOLGSQkWRkVtathjPDAodOq
