@@ -5,7 +5,6 @@ class Clube(models.Model):
     nome = models.CharField(max_length=100)
     cidade = models.CharField(max_length=100)
     estado = models.CharField(max_length=2)
-    torcedores = models.IntegerField()
 
 
 class Federacao(models.Model):
@@ -20,5 +19,5 @@ class Campeonato(models.Model):
 
 
 class Titulo(models.Model):
-    ano = models.IntegerField()
     clube = models.ForeignKey(Clube, on_delete=models.CASCADE)
+    campeonato = models.ForeignKey(Campeonato, on_delete=models.CASCADE)
