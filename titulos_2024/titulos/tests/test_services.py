@@ -28,6 +28,22 @@ def botafogo() -> Clube:
     botafogo.delete()
 
 
+@pytest.fixture
+def conmebol() -> Federacao:
+    conmebol = Federacao(nome="Conmebol")
+    conmebol.save()
+    yield conmebol
+    conmebol.delete()
+
+
+@pytest.fixture
+def libertadores2024(conmebol: Federacao) -> Campeonato:
+    libertadores2024 = Campeonato(ano=2024, nome="Libertadores", organizador=conmebol)
+    libertadores2024.save()
+    yield libertadores2024
+    libertadores2024.delete()
+
+
 @pytest.mark.django_db
 def test_cadastrar_titulo_brasileiro(brasileirao2024: Campeonato, botafogo: Clube):
     # Execução
@@ -40,15 +56,7 @@ def test_cadastrar_titulo_brasileiro(brasileirao2024: Campeonato, botafogo: Club
 
 
 @pytest.mark.django_db
-def test_cadastrar_titulo_libertadores():
-    # Preparação
-    conmebol = Federacao(nome="Conmebol")
-    conmebol.save()
-    libertadores2024 = Campeonato(ano=2024, nome="Libertadores", organizador=conmebol)
-    libertadores2024.save()
-    botafogo = Clube(nome="Botafogo", cidade="Rio de Janeiro", estado="RJ")
-    botafogo.save()
-
+def test_cadastrar_titulo_libertadores(libertadores2024: Campeonato, botafogo: Clube):
     # Execução
     titulo = cadastrar_titulo(clube=botafogo, campeonato=libertadores2024)
 
@@ -56,9 +64,3 @@ def test_cadastrar_titulo_libertadores():
     assert titulo.clube == botafogo
     assert titulo.campeonato == libertadores2024
     assert Titulo.objects.filter(clube=botafogo, campeonato=libertadores2024).exists()
-
-    # Limpeza
-    conmebol.delete()
-    libertadores2024.delete()
-    botafogo.delete()
-    titulo.delete()
