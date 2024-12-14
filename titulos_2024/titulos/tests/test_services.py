@@ -1,66 +1,49 @@
 import pytest
 
+from titulos_2024.titulos.tests.factories import (
+    ClubeFactory,
+    CampeonatoFactory,
+    FederacaoFactory,
+)
 from titulos_2024.titulos.models import Clube, Federacao, Campeonato, Titulo
 from titulos_2024.titulos.services import cadastrar_titulo
 
 
 @pytest.fixture
 def cbf() -> Federacao:
-    cbf = Federacao(nome="CBF")
-    cbf.save()
-    yield cbf
-    cbf.delete()
+    return FederacaoFactory(nome="CBF")
 
 
 @pytest.fixture
 def brasileirao2024(cbf: Federacao) -> Campeonato:
-    brasileirao2024 = Campeonato(ano=2024, nome="Brasileirão", organizador=cbf)
-    brasileirao2024.save()
-    yield brasileirao2024
-    brasileirao2024.delete()
+    return CampeonatoFactory(ano=2024, nome="Brasileirão", organizador=cbf)
 
 
 @pytest.fixture
 def botafogo() -> Clube:
-    botafogo = Clube(nome="Botafogo", cidade="Rio de Janeiro", estado="RJ")
-    botafogo.save()
-    yield botafogo
-    botafogo.delete()
+    return ClubeFactory(nome="Botafogo", cidade="Rio de Janeiro", estado="RJ")
 
 
 @pytest.fixture
 def conmebol() -> Federacao:
-    conmebol = Federacao(nome="Conmebol")
-    conmebol.save()
-    yield conmebol
-    conmebol.delete()
+    return FederacaoFactory(nome="Conmebol")
 
 
 @pytest.fixture
 def libertadores2024(conmebol: Federacao) -> Campeonato:
-    libertadores2024 = Campeonato(ano=2024, nome="Libertadores", organizador=conmebol)
-    libertadores2024.save()
-    yield libertadores2024
-    libertadores2024.delete()
+    return CampeonatoFactory(ano=2024, nome="Libertadores", organizador=conmebol)
 
 
 @pytest.mark.django_db
-def test_cadastrar_titulo_brasileiro(brasileirao2024: Campeonato, botafogo: Clube):
+@pytest.mark.parametrize("fixture_campeonato", ["brasileirao2024", "libertadores2024"])
+def test_cadastrar_titulo_brasileiro(
+    botafogo: Clube, fixture_campeonato: str, request: pytest.FixtureRequest
+):
+    campeonato = request.getfixturevalue(fixture_campeonato)
     # Execução
-    titulo = cadastrar_titulo(clube=botafogo, campeonato=brasileirao2024)
+    titulo = cadastrar_titulo(clube=botafogo, campeonato=campeonato)
 
     # Verificação
     assert titulo.clube == botafogo
-    assert titulo.campeonato == brasileirao2024
-    assert Titulo.objects.filter(clube=botafogo, campeonato=brasileirao2024).exists()
-
-
-@pytest.mark.django_db
-def test_cadastrar_titulo_libertadores(libertadores2024: Campeonato, botafogo: Clube):
-    # Execução
-    titulo = cadastrar_titulo(clube=botafogo, campeonato=libertadores2024)
-
-    # Verificação
-    assert titulo.clube == botafogo
-    assert titulo.campeonato == libertadores2024
-    assert Titulo.objects.filter(clube=botafogo, campeonato=libertadores2024).exists()
+    assert titulo.campeonato == campeonato
+    assert Titulo.objects.filter(clube=botafogo, campeonato=campeonato).exists()
