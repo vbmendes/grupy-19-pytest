@@ -1,32 +1,13 @@
 import pytest
 
-from titulos_2024.titulos.tests.factories import (
-    ClubeFactory,
-    CampeonatoFactory,
-    FederacaoFactory,
-)
+from titulos_2024.titulos.tests.factories import CampeonatoFactory
 from titulos_2024.titulos.models import Clube, Federacao, Campeonato, Titulo
 from titulos_2024.titulos.services import cadastrar_titulo
 
 
 @pytest.fixture
-def cbf() -> Federacao:
-    return FederacaoFactory(nome="CBF")
-
-
-@pytest.fixture
 def brasileirao2024(cbf: Federacao) -> Campeonato:
     return CampeonatoFactory(ano=2024, nome="Brasileirão", organizador=cbf)
-
-
-@pytest.fixture
-def botafogo() -> Clube:
-    return ClubeFactory(nome="Botafogo", cidade="Rio de Janeiro", estado="RJ")
-
-
-@pytest.fixture
-def conmebol() -> Federacao:
-    return FederacaoFactory(nome="Conmebol")
 
 
 @pytest.fixture

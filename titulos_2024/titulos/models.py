@@ -6,6 +6,16 @@ class Clube(models.Model):
     cidade = models.CharField(max_length=100)
     estado = models.CharField(max_length=2)
 
+    def ganhou(self, adversario):
+        if self.nome == "Botafogo" and adversario.nome not in [
+            "Pachuca",
+            "Bahia",
+            "Cruzeiro",
+            "Criciúma",
+        ]:
+            return True
+        return False
+
 
 class Federacao(models.Model):
     nome = models.CharField(max_length=100)
